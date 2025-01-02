@@ -9,14 +9,20 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
-  },
+  }
 });
 
 export async function POST(request: Request) {
+  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.error('SMTP-Konfiguration fehlt');
+    return NextResponse.json(
+      { error: 'Server-Konfigurationsfehler' },
+      { status: 500 }
+    );
+  }
+
   try {
     const data = await request.json();
-    
-    // Validiere die Eingabedaten
     const validatedData = contactFormSchema.parse(data);
     
     const sourceText = validatedData.source 
@@ -44,11 +50,18 @@ ${sourceText ? `<p><strong>Quelle:</strong> ${validatedData.source}</p>` : ''}
       `,
     };
 
-    await transporter.sendMail(mailOptions);
-
-    return NextResponse.json({ success: true });
+    try {
+      await transporter.sendMail(mailOptions);
+      return NextResponse.json({ success: true });
+    } catch (emailError) {
+      console.error('SMTP-Fehler:', emailError);
+      return NextResponse.json(
+        { error: 'E-Mail konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.' },
+        { status: 500 }
+      );
+    }
   } catch (error) {
-    console.error('Contact form error:', error);
+    console.error('Formular-Fehler:', error);
     
     if (error instanceof Error) {
       return NextResponse.json(

@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useToast } from "@/hooks/use-toast";
-import { apiClient } from "@/lib/api/client";
 import {
   Dialog,
   DialogContent,
@@ -56,12 +55,25 @@ export function ContactForm({ isOpen, onOpenChange, source = "contact" }: Contac
     setSuccess(false);
 
     try {
-      await apiClient.post('/api/contact', data);
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      
+      const responseData = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(responseData.error || 'Ein Fehler ist aufgetreten');
+      }
+      
       setSuccess(true);
-
       toast({
         title: "Nachricht gesendet",
-        description: "Wir werden uns in Kürze bei Ihnen melden.",
+        description: "Wir haben Ihre Nachricht erhalten und werden uns zeitnah bei Ihnen melden.",
+        duration: 5000,
       });
       
       reset();
@@ -71,9 +83,10 @@ export function ContactForm({ isOpen, onOpenChange, source = "contact" }: Contac
     } catch (error) {
       console.error('Contact form error:', error);
       toast({
-        title: "Fehler",
-        description: "Beim Senden Ihrer Nachricht ist ein Fehler aufgetreten.",
+        title: "Fehler beim Senden",
+        description: error instanceof Error ? error.message : "Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
         variant: "destructive",
+        duration: 5000,
       });
     } finally {
       setIsSubmitting(false);
