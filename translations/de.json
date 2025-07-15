@@ -191,6 +191,23 @@
     "email": "info@callflows.de",
     "phone": "+49 511 1665 3388"
   },
+  "petraUsp": {
+    "badge": "Enterprise Exklusiv",
+    "title": "KI + Menschliche Expertise",
+    "subtitle": "Wenn Technologie auf 20 Jahre Vertriebserfahrung trifft",
+    "description": "Exklusiv für unsere Enterprise-Kunden: Professionelle Beratungsleistungen durch eine der führenden Unternehmensberaterinnen für Vertrieb und Mitarbeiterführung in Deutschland.",
+    "benefit1Title": "20+ Jahre Erfahrung",
+    "benefit1Description": "Bewährte Methoden für nachhaltigen Vertriebserfolg",
+    "benefit2Title": "Spezialist für KI-Telefonie",
+    "benefit2Description": "Perfekte Kombination aus KI-Vorarbeit und menschlichem Abschluss",
+    "benefit3Title": "Enterprise Exklusiv",
+    "benefit3Description": "Individuelle Beratung für maximalen ROI",
+    "ctaButton": "Beratungsleistungen entdecken",
+    "modalTitle": "Smarter Telefonvertrieb – Wenn KI vorarbeitet & Menschen abschließen",
+    "modalIntro": "Schluss mit frustrierenden Cold Calls ohne Wirkung.",
+    "modalDescription": "In diesem Seminar zeigen wir, wie moderne Vertriebsteams mithilfe von Telefon-KI gezielt, motiviert und effizient telefonieren – mit echten Chancen statt blinder Kaltakquise.",
+    "websiteButton": "Website besuchen"
+  },
   "footer": {
     "privacy": "Datenschutz",
     "terms": "AGB",
@@ -422,7 +439,24 @@
       "description": "Dedizierte Vollzeitkräfte für Entwicklung, Wartung und Optimierung nötig"
     },
     "solutionTitle": "Unsere Lösung",
-    "solutionDescription": "callflows übernimmt die gesamte Komplexität für Sie. Wir integrieren alle notwendigen Komponenten zu einer schlüsselfertigen Lösung – ohne dass Sie KI-Expertise oder zusätzliche Vollzeitkräfte benötigen."
+    "solutionDescription": "callflows übernimmt die gesamte Komplexität für Sie. Wir integrieren alle notwendigen Komponenten zu einer schlüsselfertigen Lösung – ohne dass Sie KI-Expertise oder zusätzliche Vollzeitkräfte benötigen.",
+    "comparison": {
+      "callflows": [
+        "Komplette Expertise & Setup-Übernahme",
+        "Proaktive digitale Transformation",
+        "Laufende Optimierung & Weiterentwicklung"
+      ],
+      "others": [
+        "Verkaufen reine Whitelabel-Lösungen",
+        "Lassen Sie allein mit Setup & Prompting",
+        "Keine proaktive Weiterentwicklung"
+      ],
+      "othersTitle": "Andere Anbieter"
+    },
+    "keyMessage": {
+      "title": "Strategischer Partner",
+      "description": "Sie erhalten nicht nur eine Lösung – sondern einen strategischen Partner für Ihre KI-Transformation."
+    }
   },
   "cta": {
     "title": "Bereit für die Zukunft des Kundenkontakts?",
