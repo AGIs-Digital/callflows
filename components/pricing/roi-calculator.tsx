@@ -7,14 +7,14 @@ import { Badge } from "@/components/ui/badge";
 import { TrendingUp, Users, Phone, Clock, Euro, Calculator, Zap } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
+// Diskrete Gehaltswerte: 556€, 750€, dann 250€-Schritte
+const SALARY_VALUES = [
+  556, 750, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 
+  3250, 3500, 3750, 4000, 4250, 4500, 4750, 5000, 5250, 5500, 5750, 6000
+] as const;
+
 export function ROICalculator() {
   const { t } = useI18n();
-  
-  // Diskrete Gehaltswerte: 556€, 750€, dann 250€-Schritte
-  const salaryValues = [
-    556, 750, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 
-    3250, 3500, 3750, 4000, 4250, 4500, 4750, 5000, 5250, 5500, 5750, 6000
-  ];
   
   // Schieberegler-Werte
   const [employees, setEmployees] = useState([2]);
@@ -24,7 +24,7 @@ export function ROICalculator() {
   const [automationRate, setAutomationRate] = useState([90]);
   
   // Aktuelles Gehalt basierend auf Index
-  const monthlySalary = salaryValues[salaryIndex[0]];
+  const monthlySalary = SALARY_VALUES[salaryIndex[0]];
   
   // Berechnete Werte
   const [calculations, setCalculations] = useState({
@@ -42,7 +42,7 @@ export function ROICalculator() {
   useEffect(() => {
     // Realistische Vollzeit-Personalkosten pro Mitarbeiter
     const employerCostFactor = 1.45; // +45% Personalnebenkosten (Lohnnebenkosten, Strukturkosten, Sonstige Personalkosten)
-    const currentMonthlySalary = salaryValues[salaryIndex[0]];
+    const currentMonthlySalary = SALARY_VALUES[salaryIndex[0]];
     const monthlyPersonalCostPerEmployee = currentMonthlySalary * employerCostFactor;
     const totalEmployeeCosts = monthlyPersonalCostPerEmployee * employees[0];
     const yearlyPersonalCosts = totalEmployeeCosts * 12;
@@ -146,14 +146,14 @@ export function ROICalculator() {
                     {monthlySalary.toLocaleString()} €
                   </Badge>
                 </div>
-                                 <Slider
-                   value={salaryIndex}
-                   onValueChange={setSalaryIndex}
-                   max={salaryValues.length - 1}
-                   min={0}
-                   step={1}
-                   className="w-full"
-                 />
+                                                 <Slider
+                  value={salaryIndex}
+                  onValueChange={setSalaryIndex}
+                  max={SALARY_VALUES.length - 1}
+                  min={0}
+                  step={1}
+                  className="w-full"
+                />
               </div>
 
               {/* Anrufe pro Tag */}
