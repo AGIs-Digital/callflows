@@ -247,7 +247,20 @@ class CIFastDeploy {
 
     this.ftpDeploy.on('uploaded', function(data) {
       uploadCount++;
-      console.log(`📤 ${uploadCount}/${expectedFiles} - ${data.filename}`);
+      
+      // Kompakte Progress-Anzeige - nur alle 10 Dateien oder bei wichtigen Meilensteinen
+      if (uploadCount === 1 || uploadCount % 10 === 0) {
+        if (expectedFiles === 'alle') {
+          // Bei vollständigem Deploy nur Zähler ohne Prozent
+          console.log(`📤 ${uploadCount} Dateien hochgeladen...`);
+        } else {
+          // Bei bekannter Anzahl mit Progress-Bar
+          const progressPercentage = Math.floor((uploadCount / expectedFiles) * 100);
+          const progressBar = '█'.repeat(Math.floor(progressPercentage / 5));
+          const emptyBar = '░'.repeat(20 - progressBar.length);
+          console.log(`📤 ${uploadCount}/${expectedFiles} [${progressBar}${emptyBar}] ${progressPercentage}%`);
+        }
+      }
     });
 
     this.ftpDeploy.on('upload-error', function(data) {
