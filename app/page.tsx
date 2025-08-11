@@ -15,31 +15,21 @@ export default function Home() {
   return (
     <main className="bg-background">
       <SiteHeader />
-
       <HeroSection />
-
       <IntegrationChallengesSection />
-      
       <PetraUSPSection />
-  
       <ProcessSection />
-
       <div id="pricecomparison">
         <PricingComparisonSection />
       </div>
-
       <CTASection />
-
       <ROICalculator />
-
-
       <div id="features">
         <FeaturesSection />
       </div>
       <div id="core-features">
         <CoreFeaturesSection />
       </div>
-      
       <CTASectionSecondary />
       <SiteFooter />
     </main>

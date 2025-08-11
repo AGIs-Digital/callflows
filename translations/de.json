@@ -168,10 +168,38 @@
   "glossary": {
     "kiCallflow": {
       "title": "KI‑callflow",
+      "pageTitle": "Was ist ein KI‑callflow? Definition, Unterschiede, Vorteile",
+      "pageDescription": "KI‑callflow: lernfähiger Gesprächs‑ und Prozessfluss. Unterschiede zum klassischen Callflow und zu Voice Agents, Vorteile und Einsatz.",
       "short": "KI‑callflow: lernfähiger Gesprächs- und Prozessfluss – versteht Anliegen, führt Dialoge, bindet Systeme an.",
       "l1": "Dynamische Dialoge statt starre Menüs",
       "l2": "Prozesslogik + System‑Integrationen",
-      "l3": "Mehr als Callflow oder nur Voice Agent"
+      "l3": "Mehr als Callflow oder nur Voice Agent",
+      "intro": "Ein KI‑callflow ist ein lernfähiger Gesprächs‑ und Prozessfluss, der Anliegen versteht, Dialoge führt und Systeme anbindet. Er vereint Intent‑Erkennung, Business‑Logik, Automationen und Integrationen.",
+      "diffTitle": "Unterschied zum klassischen Callflow",
+      "diffItems": [
+        "Dynamisch statt statisch: erkennt Absichten, entscheidet kontextabhängig",
+        "Mehrstufige Prozesse inkl. Rückfragen, Validierungen, Übergaben",
+        "Nahtlose System‑Integrationen (CRM/ERP/Helpdesk)"
+      ],
+      "voiceAgentsTitle": "Abgrenzung zu „Voice Agents“",
+      "voiceAgentsText": "Ein Voice Agent ist die Stimme. Der KI‑callflow orchestriert den gesamten Prozess inkl. Logik, Daten und Aktionen.",
+      "terminologyTitle": "Terminologie im Überblick",
+      "terminologyHeaders": ["Begriff", "Fokus"],
+      "terminology": [
+        "Conversation Workflow / Conversation Flow||Gesamtablauf inkl. Nachbearbeitungsschritte, nicht nur der Live‑Call.",
+        "Call Lifecycle||Vollständiger Lebenszyklus eines Anrufs – von Anrufbeginn über Gespräch bis zur Nachbearbeitung.",
+        "Post‑Call Processing (PCP)||Alles, was nach dem Gespräch passiert: Auswertung, Datenbereinigung, Klassifizierung, Trigger.",
+        "Conversational Automation Pipeline||Wenn die Nachbearbeitung stark automatisiert ist und mit anderen Systemen integriert ist.",
+        "Contact Flow mit Backend‑Integration||Bezeichnung im Contact‑Center‑Umfeld, wenn Logik + Datenverarbeitung verbunden sind."
+      ],
+      "noteLabel": "Merke:",
+      "note": "Sobald Analyse, Bereinigung, Datenextraktion und Automationen nach dem Gespräch dazugehören, spricht man eher von Call Lifecycle oder Conversational Automation Pipeline – es ist ein Gesamtprozess vor, während und nach dem Call.",
+      "benefitsTitle": "Vorteile",
+      "benefits": [
+        "24/7 Erreichbarkeit und kürzere Wartezeiten",
+        "Höhere Abschlussquote durch strukturierte Prozessführung",
+        "Transparente, sekundengenaue Abrechnung"
+      ]
     },
     "readMore": "Mehr erfahren"
   },
@@ -338,7 +366,13 @@
       "Regelmäßige Check-ins zur Optimierung",
       "Setup, Support und Telefonnummer inklusive"
     ],
-    "teamDescription": "ist keine Software – sondern ein Team. Mit Hintergrund in Vertrieb, Marketing & Automatisierung. Mit echtem Interesse an Ihrem Erfolg."
+    "teamDescription": "ist keine Software – sondern ein Team. Mit Hintergrund in Vertrieb, Marketing & Automatisierung. Mit echtem Interesse an Ihrem Erfolg.",
+    "whyTitle": "Warum wir callflows gegründet haben",
+    "whyTimo": "„Wir stehen ganz am Anfang einer riesigen Entwicklung – und ich liebe es, mittendrin zu sein. Es begeistert mich, wie KI schon heute echte Gespräche führen kann. Und noch mehr begeistert es mich, was sie morgen leisten wird. Mit callflows machen wir diese Möglichkeiten für Unternehmen erlebbar – und helfen dabei, sie produktiv zu nutzen.“",
+    "whyTom": "„Der Einsatz von KI im Kundenkontakt erfordert nicht nur Technologie, sondern ein tiefes Verständnis für Prozesse, Qualität und Effizienz. Unser Ziel ist es, Lösungen zu schaffen, die skalierbar, wirtschaftlich sinnvoll und dabei zuverlässig in bestehende Abläufe integrierbar sind. Genau das setzen wir mit callflows tagtäglich um.“",
+    "teamQuotesTitle": "Team‑Stimmen",
+    "teamDefaultRole": "Teammitglied",
+    "teamDefaultQuote": "„Ich arbeite mit daran, KI‑callflows produktiv zu machen.“"
   },
   "legal": {
     "impressum": {
