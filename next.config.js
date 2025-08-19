@@ -1,5 +1,11 @@
+
 /** @type {import('next').NextConfig} */
 const path = require('path');
+
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+  openAnalyzer: true,
+});
 
 const nextConfig = {
   // Komprimierung und Bundle-Optimierung
@@ -10,7 +16,20 @@ const nextConfig = {
     // Nur bewährte, stabile Features
     esmExternals: true, // ESM-Module externalisieren
     serverComponentsExternalPackages: ['sharp'], // Sharp extern halten
+    // Besseres Tree-Shaking
+    optimizePackageImports: ['lucide-react'],
+    // Kleinere JavaScript-Bundles (deaktiviert da critters fehlt)
+    // optimizeCss: true,
+    // Parallel Builds
+    cpus: Math.max(1, require('os').cpus().length - 1),
   },
+  
+  // Automatisches Tree-Shaking für Icons (für nächste Next.js Version)
+  // modularizeImports: {
+  //   'lucide-react': {
+  //     transform: 'lucide-react/dist/esm/icons/{{kebabCase member}}',
+  //   },
+  // },
   
   webpack: (config, { dev, isServer, webpack }) => {
     // Performance-Optimierungen für alle Builds
@@ -122,12 +141,10 @@ const nextConfig = {
   
   // Externe Libraries optimieren für statischen Export
   transpilePackages: [
-    '@radix-ui/react-icons',
     'lucide-react'
   ],
   
   // Tree Shaking für bessere Bundle-Größe
-  // Entferne modularizeImports da es Probleme bei statischem Export verursacht
 };
 
-module.exports = nextConfig
+module.exports = withBundleAnalyzer(nextConfig);

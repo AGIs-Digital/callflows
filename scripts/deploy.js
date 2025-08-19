@@ -37,23 +37,41 @@ const config = {
     'public/videos/**'
   ],
   sftp: true,
-  deleteRemote: false,
+  
+  // 🎯 SMART SYNC STRATEGY (Einzelentwickler-optimiert)
+  deleteRemote: true, // WICHTIG: Verwaiste Dateien löschen!
   backupDir: 'backups',
-  skipIfOlderModDate: true, // Nur neuere Dateien übertragen
-  preserveTimestamps: true, // Zeitstempel beibehalten
+  
+  // 🚀 MAXIMALE GESCHWINDIGKEIT
+  skipIfOlderModDate: true, // Nur geänderte Dateien
+  preserveTimestamps: true, // Für präzise Vergleiche
   forcePasv: true,
-  // Performance-Optimierungen
-  concurrency: 8, // 8 parallele Uploads (statt 1)
-  parallelReads: true, // Paralleles Lesen der Dateien
+  
+  // Aggressive Performance
+  concurrency: 16, // Noch mehr parallele Uploads
+  parallelReads: true,
+  
+  // Smart File Handling
+  sizeThreshold: 512 * 1024, // 512KB - Kleinere Batches für bessere Kontrolle
+  
   sftpConfig: {
     algorithms: {
       kex: ['diffie-hellman-group-exchange-sha256'],
-      cipher: ['aes128-ctr'], // Schnellere Verschlüsselung
+      cipher: ['aes128-ctr'], // Schnellster Cipher
       hmac: ['hmac-sha2-256']
     },
-    compress: true, // SFTP-Kompression aktivieren
-    keepaliveInterval: 60000, // Keep-alive für stabile Verbindung
-    keepaliveCountMax: 3
+    compress: true,
+    keepaliveInterval: 15000, // Kürzere Intervalle
+    keepaliveCountMax: 3,
+    
+    // 🎯 SPEED OPTIMIZATION
+    highWaterMark: 128 * 1024, // 128KB Buffer (größer = schneller)
+    readyTimeout: 15000, // 15s Timeout
+    strictVendor: false,
+    
+    // Minimal Retries für Speed
+    retries: 1, // Nur 1 Retry für Geschwindigkeit
+    retryDelay: 500, // 0.5s zwischen Retries
   }
 };
 

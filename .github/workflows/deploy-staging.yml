@@ -79,7 +79,7 @@ jobs:
             cd staging.callflows.de/
             touch .maintenance
 
-      - name: 🗄️ Backup
+      - name: 🗄️ Simple Backup (Einzelentwickler-optimiert)
         uses: appleboy/ssh-action@v1.0.3
         continue-on-error: true
         with:
@@ -90,17 +90,28 @@ jobs:
           script: |
             cd staging.callflows.de/
             timestamp=$(date +%Y%m%d_%H%M%S)
+            
+            # 🎯 EINZELENTWICKLER BACKUP STRATEGY
             mkdir -p backups
-            # Schnelles, sicheres Backup nur der wichtigsten Dateien
-            timeout 120s tar -czf backups/backup-${timestamp}.tar.gz \
+            
+            # Nur 1 Backup (GitHub ist dein Rollback!)
+            echo "📦 Creating single backup..."
+            timeout 60s tar -czf backups/last-deploy-${timestamp}.tar.gz \
               --exclude='backups/*' \
               --exclude='logs/*' \
               --exclude='.maintenance' \
               --exclude='node_modules/*' \
               --exclude='.git/*' \
               --exclude='*.log' \
-              --max-size=100M \
+              --max-size=50M \
               . 2>/dev/null || echo "Backup completed with warnings"
+            
+            # 2 Backups behalten (der neueste + der vorletzte)
+            cd backups
+            ls -t *.tar.gz 2>/dev/null | tail -n +3 | xargs rm -f 2>/dev/null || true
+            cd ..
+            
+            echo "✅ Dual backup strategy completed (2 Backups + GitHub = Rollback!)"
 
       - name: 🧹 Empty remote directory
         uses: appleboy/ssh-action@v1.0.3
@@ -127,10 +138,77 @@ jobs:
           npm install --quiet ftp-deploy
           node scripts/deploy.js
 
+      - name: 🔒 Protect admin area with Basic Auth (Staging)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: 22
+          script: |
+            set -e
+            cd staging.callflows.de/admin-dashboard/
+            # Staging verwendet Test-Credentials für identische Umgebung
+            STAGING_ADMIN_USER="staging-admin"
+            STAGING_ADMIN_PASS="staging-test-2024"
+            PASS_HASH=$(openssl passwd -apr1 "${STAGING_ADMIN_PASS}")
+            cat > .htaccess << 'EOF'
+            AuthType Basic
+            AuthName "Staging Admin - Test Environment"
+            AuthUserFile REPLACE_WITH_ABSOLUTE
+            Require valid-user
+            EOF
+            # Replace placeholder with absolute path to .htpasswd
+            sed -i "s|REPLACE_WITH_ABSOLUTE|$(pwd)/.htpasswd|g" .htaccess
+            echo "${STAGING_ADMIN_USER}:${PASS_HASH}" > .htpasswd
+            chmod 640 .htpasswd
+            echo "Basic Auth enabled for staging admin-dashboard/"
+
+      - name: 🔐 Inject server env for PHP endpoints (Staging)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: 22
+          script: |
+            set -e
+            cd staging.callflows.de/
+            # Create Apache env vars via .htaccess at site root (only for PHP to read via getenv)
+            # Staging verwendet Test-Credentials
+            printf "\n# Env for PHP endpoints (Staging)\n" >> .htaccess || true
+            printf "SetEnvIfNoCase Request_URI \".*\" ADMIN_USERNAME=staging-admin\n" >> .htaccess
+            printf "SetEnvIfNoCase Request_URI \".*\" ADMIN_PASSWORD=staging-test-2024\n" >> .htaccess
+            printf "SetEnvIfNoCase Request_URI \".*\" CUSTOMER_USERNAME=staging-customer\n" >> .htaccess
+            printf "SetEnvIfNoCase Request_URI \".*\" CUSTOMER_PASSWORD=staging-test-2024\n" >> .htaccess
+            echo "Server env for PHP endpoints injected (Staging)"
+
       - name: 🧹 Clean npm cache
         run: |
           rm -rf node_modules
           rm -f package-lock.json
+
+      - name: 🔍 Quick Health Check 
+        uses: appleboy/ssh-action@v1.0.3
+        continue-on-error: true
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: 22
+          script: |
+            cd staging.callflows.de/
+            
+            echo "🔍 Quick health check..."
+            
+            # Nur die wichtigsten Checks (schnell!)
+            if [ -f "index.html" ] && [ -d "_next" ]; then
+              echo "✅ Basic deployment successful"
+              echo "📊 Site ready: https://staging.callflows.de"
+            else
+              echo "❌ Basic deployment failed"
+              echo "🔧 Check GitHub Actions logs"
+            fi
 
       - name: 🟢 Deaktiviere Wartungsmodus
         if: always()
@@ -142,3 +220,4 @@ jobs:
           script: |
             cd staging.callflows.de/
             rm -f .maintenance
+            echo "🟢 Maintenance mode disabled"

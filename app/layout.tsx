@@ -138,15 +138,17 @@ export default function RootLayout({
         <meta name="lighthouse-ci" content="index,follow" />
         <meta name="pagespeed" content="nolimit" />
         
-        {/* Critical Resource Preloads - SOFORTIGE PageSpeed Verbesserung */}
-        <link rel="preload" href="/fonts/Satoshi-Bold.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        {/* Critical Resource Preloads - Optimiert für First Paint */}
         <link rel="preload" href="/fonts/Satoshi-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/images/callflows_brand_no_claim.webp" as="image" />
         
-        {/* DNS Performance Hints */}
-        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+        {/* DNS Performance Hints - Für externe Services */}
         <link rel="dns-prefetch" href="//www.google-analytics.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="//googletagmanager.com" />
+        
+        {/* Resource Hints für kritische Assets */}
+        <link rel="prefetch" href="/fonts/Satoshi-Bold.woff2" />
+        <link rel="prefetch" href="/fonts/Satoshi-Medium.woff2" />
         
 
         

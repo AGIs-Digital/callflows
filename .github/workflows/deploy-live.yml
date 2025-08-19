@@ -78,7 +78,7 @@ jobs:
             cd callflows.de/
             touch .maintenance
 
-      - name: 🗄️ Backup
+      - name: 🗄️ Simple Production Backup
         uses: appleboy/ssh-action@v1.0.3
         continue-on-error: true
         with:
@@ -89,17 +89,28 @@ jobs:
           script: |
             cd callflows.de/
             timestamp=$(date +%Y%m%d_%H%M%S)
+            
+            # 🎯 EINZELENTWICKLER PRODUCTION BACKUP
             mkdir -p backups
-            # Schnelles, sicheres Backup nur der wichtigsten Dateien
-            timeout 120s tar -czf backups/backup-${timestamp}.tar.gz \
+            
+            # Nur 1 Production Backup (GitHub = Rollback!)
+            echo "📦 Creating production backup..."
+            timeout 90s tar -czf backups/production-${timestamp}.tar.gz \
               --exclude='backups/*' \
               --exclude='logs/*' \
               --exclude='.maintenance' \
               --exclude='node_modules/*' \
               --exclude='.git/*' \
               --exclude='*.log' \
-              --max-size=100M \
-              . 2>/dev/null || echo "Backup completed with warnings"
+              --max-size=75M \
+              . 2>/dev/null || echo "Production backup completed with warnings"
+            
+            # 2 Production Backups behalten (der neueste + der vorletzte)
+            cd backups
+            ls -t *.tar.gz 2>/dev/null | tail -n +3 | xargs rm -f 2>/dev/null || true
+            cd ..
+            
+            echo "✅ Production dual backup completed (2 Backups + GitHub = Rollback!)"
 
       - name: 🧹 Empty remote directory
         uses: appleboy/ssh-action@v1.0.3
@@ -126,7 +137,7 @@ jobs:
           npm install --quiet ftp-deploy
           node scripts/deploy.js
 
-      - name: 🔒 Protect admin area with Basic Auth
+      - name: 🔒 Protect admin area with Basic Auth (Production)
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -136,10 +147,11 @@ jobs:
           script: |
             set -e
             cd callflows.de/admin-dashboard/
+            # Production verwendet echte Credentials
             PASS_HASH=$(openssl passwd -apr1 "${{ secrets.ADMIN_PASSWORD }}")
             cat > .htaccess << 'EOF'
             AuthType Basic
-            AuthName "Restricted"
+            AuthName "Production Admin - Restricted Access"
             AuthUserFile REPLACE_WITH_ABSOLUTE
             Require valid-user
             EOF
@@ -147,9 +159,9 @@ jobs:
             sed -i "s|REPLACE_WITH_ABSOLUTE|$(pwd)/.htpasswd|g" .htaccess
             echo "${{ secrets.ADMIN_USERNAME }}:${PASS_HASH}" > .htpasswd
             chmod 640 .htpasswd
-            echo "Basic Auth enabled for admin-dashboard/"
+            echo "Basic Auth enabled for production admin-dashboard/"
 
-      - name: 🔐 Inject server env for PHP endpoints
+      - name: 🔐 Inject server env for PHP endpoints (Production)
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -160,18 +172,40 @@ jobs:
             set -e
             cd callflows.de/
             # Create Apache env vars via .htaccess at site root (only for PHP to read via getenv)
-            # Note: Requires Apache AllowOverride Options
-            printf "\n# Env for PHP endpoints\n" >> .htaccess || true
-            printf "SetEnvIfNoCase Request_URI ".*" ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }}\n" >> .htaccess
-            printf "SetEnvIfNoCase Request_URI ".*" ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}\n" >> .htaccess
-            printf "SetEnvIfNoCase Request_URI ".*" CUSTOMER_USERNAME=${{ secrets.CUSTOMER_USERNAME }}\n" >> .htaccess
-            printf "SetEnvIfNoCase Request_URI ".*" CUSTOMER_PASSWORD=${{ secrets.CUSTOMER_PASSWORD }}\n" >> .htaccess
-            echo "Server env for PHP endpoints injected"
+            # Production verwendet echte Credentials
+            printf "\n# Env for PHP endpoints (Production)\n" >> .htaccess || true
+            printf "SetEnvIfNoCase Request_URI \".*\" ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }}\n" >> .htaccess
+            printf "SetEnvIfNoCase Request_URI \".*\" ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}\n" >> .htaccess
+            printf "SetEnvIfNoCase Request_URI \".*\" CUSTOMER_USERNAME=${{ secrets.CUSTOMER_USERNAME }}\n" >> .htaccess
+            printf "SetEnvIfNoCase Request_URI \".*\" CUSTOMER_PASSWORD=${{ secrets.CUSTOMER_PASSWORD }}\n" >> .htaccess
+            echo "Server env for PHP endpoints injected (Production)"
 
       - name: 🧹 Clean npm cache
         run: |
           rm -rf node_modules
           rm -f package-lock.json
+
+      - name: 🔍 Quick Production Check 
+        uses: appleboy/ssh-action@v1.0.3
+        continue-on-error: true
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: 22
+          script: |
+            cd callflows.de/
+            
+            echo "🔍 Quick production check..."
+            
+            # Nur die wichtigsten Production Checks (schnell!)
+            if [ -f "index.html" ] && [ -d "_next" ] && [ -f ".htaccess" ]; then
+              echo "✅ Production deployment successful"
+              echo "📊 Site ready: https://callflows.de"
+            else
+              echo "❌ Production deployment failed"
+              echo "🔧 Check GitHub Actions logs"
+            fi
 
       - name: 🟢 Deaktiviere Wartungsmodus
         if: always()
@@ -183,4 +217,5 @@ jobs:
           script: |
             cd callflows.de/
             rm -f .maintenance
+            echo "🟢 Production maintenance mode disabled"
 

@@ -17,8 +17,12 @@ export interface AnimatedBeamProps {
   pathOpacity?: number;
   gradientStartColor?: string;
   gradientStopColor?: string;
-  delay?: number;
-  duration?: number;
+  
+  // 🎯 TIMING CONTROLS - Für externe Steuerung der Animation
+  delay?: number; // Startverzögerung in Sekunden
+  duration?: number; // Dauer einer Animation in Sekunden
+  repeatDelay?: number; // ⚡ PAUSE zwischen Animationen in Sekunden (0 = keine Pause)
+  
   startXOffset?: number;
   startYOffset?: number;
   endXOffset?: number;
@@ -31,9 +35,14 @@ export const AnimatedBeam: React.FC<AnimatedBeamProps> = ({
   fromRef,
   toRef,
   curvature = 0,
-  reverse = false, // Include the reverse prop
-  duration = Math.random() * 3 + 4,
-  delay = 0,
+  reverse = false, // Richtung der Animation umkehren
+  
+  // 🎯 TIMING PARAMETER - Hier wird die Animationsgeschwindigkeit gesteuert
+  duration = Math.random() * 2 + 2, // Zufällige Dauer für natürliche Variation
+  delay = 0, // Startverzögerung in Sekunden
+  repeatDelay = 0, // ⚡ Pause zwischen Animationen (Standard: 0 = keine Pause)
+  
+  // 🎨 STYLING PARAMETER
   pathColor = "gray",
   pathWidth = 4,
   pathOpacity = 0.1,
